@@ -1,13 +1,14 @@
+
 {
-  "name": "backend",
+  "name": "aurora-space-explorer",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "AURORA - Explore the Infinite Universe",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["aurora", "space", "universe"],
+  "author": "Yawar Ali",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -16,3 +17,4 @@
     "express": "^5.3.0"
   }
 }
+
