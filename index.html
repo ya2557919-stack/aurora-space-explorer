@@ -1,0 +1,2764 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080d1a" />
+    <title>AURORA | Explore the Universe</title>
+    <meta
+      name="description"
+      content="Explore planets, galaxies, discoveries and the wonders of space with AURORA."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #080d1a;
+        --surface: #111b30;
+        --text: #f5f7ff;
+        --muted: #aab8cc;
+        --accent: #22d3ee;
+        --purple: #8b5cf6;
+        --border: rgba(255, 255, 255, 0.12);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      body.light-theme {
+        --bg: #eef4ff;
+        --surface: #ffffff;
+        --text: #10182b;
+        --muted: #526078;
+        --border: rgba(0, 0, 0, 0.12);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .container {
+        width: min(1200px, 92%);
+        margin: auto;
+      }
+
+      .section {
+        padding: 85px 0;
+      }
+
+      .section-title {
+        font-family: "Orbitron", sans-serif;
+        font-size: clamp(25px, 4vw, 38px);
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .section-description {
+        color: var(--muted);
+        text-align: center;
+        max-width: 650px;
+        margin: 0 auto 40px;
+        line-height: 1.8;
+      }
+
+      .accent {
+        color: var(--accent);
+      }
+
+      .primary-btn {
+        display: inline-block;
+        padding: 13px 25px;
+        background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-weight: 700;
+        transition: 0.3s;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(34, 211, 238, 0.25);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 600px) {
+        .section {
+          padding: 60px 0;
+        }
+      }
+    </style>
+
+    <!-- Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <!-- PRELOADER -->
+    <div id="preloader" class="preloader">
+      <div class="loader-content">
+        <div class="loader-orbit">
+          <div class="loader-planet"></div>
+        </div>
+        <h2>AURORA</h2>
+        <p>Preparing your universe...</p>
+      </div>
+    </div>
+
+    <style>
+      .preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #080d1a;
+        display: grid;
+        place-items: center;
+        transition:
+          opacity 0.5s,
+          visibility 0.5s;
+      }
+
+      .preloader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader-content {
+        text-align: center;
+      }
+
+      .loader-content h2 {
+        font-family: "Orbitron", sans-serif;
+        letter-spacing: 5px;
+        margin-top: 25px;
+        color: #22d3ee;
+      }
+
+      .loader-content p {
+        color: #aab8cc;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+
+      .loader-orbit {
+        width: 65px;
+        height: 65px;
+        border: 2px solid #22d3ee;
+        border-radius: 50%;
+        margin: auto;
+        display: grid;
+        place-items: center;
+        animation: spin 2s linear infinite;
+      }
+
+      .loader-planet {
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+        border-radius: 50%;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* HEADER */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(8, 13, 26, 0.92);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .navbar {
+        min-height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .logo {
+        font-family: "Orbitron", sans-serif;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        color: #22d3ee;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: #d5deed;
+        font-size: 13px;
+        transition: 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #22d3ee;
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .theme-btn,
+      .menu-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 9px 12px;
+        border-radius: 10px;
+      }
+
+      .menu-btn {
+        display: none;
+        font-size: 20px;
+      }
+
+      .login-btn {
+        background: #22d3ee;
+        color: #080d1a;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 19px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 850px) {
+        .menu-btn {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 76px;
+          left: 0;
+          right: 0;
+          padding: 25px;
+          background: #111b30;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 22px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+      }
+
+      @media (max-width: 450px) {
+        .logo {
+          font-size: 20px;
+        }
+        .login-btn {
+          padding: 9px 13px;
+        }
+      }
+    </style>
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="container navbar">
+        <a href="#home" class="logo">AURORA<span>.</span></a>
+
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#planets">Planets</a></li>
+          <li><a href="#discoveries">Discoveries</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#facts">Space Facts</a></li>
+          <li><a href="#database-videos">Videos</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="theme-btn" id="themeToggle" aria-label="Change theme">
+            ☀
+          </button>
+          <button class="login-btn" id="openLogin">Sign In</button>
+          <button class="login-btn" id="userProfile" style="display: none">
+            My Account
+          </button>
+
+          <button class="login-btn" id="logoutBtn" style="display: none">
+            Logout
+          </button>
+          <button class="menu-btn" id="menuToggle" aria-label="Open menu">
+            ☰
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <style>
+      /* HERO SECTION */
+      .hero {
+        min-height: 88vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        background:
+          linear-gradient(90deg, rgba(8, 13, 26, 0.96), rgba(8, 13, 26, 0.55)),
+          url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=2000&q=90")
+            center/cover no-repeat;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 75% 45%,
+          transparent,
+          #080d1a 75%
+        );
+        pointer-events: none;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 750px;
+        padding: 90px 0;
+      }
+
+      .hero-label {
+        display: inline-block;
+        padding: 9px 16px;
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        color: #22d3ee;
+        border-radius: 30px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+        background: rgba(34, 211, 238, 0.08);
+      }
+
+      .hero h1 {
+        font-family: "Orbitron", sans-serif;
+        font-size: clamp(38px, 7vw, 76px);
+        line-height: 1.15;
+        margin-bottom: 25px;
+      }
+      body.light-theme .hero h1 {
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+     .hero h1 span {
+  background: linear-gradient(90deg, #0891b2, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+      .hero-description {
+        color: #c0cde0;
+        font-size: 16px;
+        line-height: 1.9;
+        max-width: 600px;
+        margin-bottom: 35px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .secondary-btn {
+        display: inline-block;
+        padding: 13px 25px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: white;
+        border-radius: 30px;
+        transition: 0.3s;
+      }
+
+      .secondary-btn:hover {
+        border-color: #22d3ee;
+        color: #22d3ee;
+        transform: translateY(-3px);
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 45px;
+        flex-wrap: wrap;
+        margin-top: 65px;
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-family: "Orbitron", sans-serif;
+        color: #22d3ee;
+        font-size: 25px;
+        margin-bottom: 7px;
+      }
+
+      .hero-stat span {
+        color: #aab8cc;
+        font-size: 12px;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #22d3ee;
+        font-size: 12px;
+        letter-spacing: 3px;
+        animation: float 2s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate(-50%, 0);
+        }
+        50% {
+          transform: translate(-50%, -10px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero {
+          min-height: 85vh;
+        }
+
+        .hero-content {
+          padding: 65px 0;
+        }
+
+        .hero-description {
+          font-size: 14px;
+        }
+
+        .hero-stats {
+          gap: 25px;
+          margin-top: 45px;
+        }
+
+        .hero-stat strong {
+          font-size: 21px;
+        }
+      }
+    </style>
+
+    <!-- HOME HERO -->
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-label">✦ YOUR JOURNEY BEYOND EARTH BEGINS HERE</div>
+
+          <h1>
+            EXPLORE THE
+            <span>INFINITE</span>
+            UNIVERSE
+          </h1>
+
+          <p class="hero-description">
+            Discover mysterious planets, distant galaxies, incredible space
+            missions and the breathtaking wonders of our universe. Your
+            adventure into the unknown starts with AURORA.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="#planets" class="primary-btn"> Explore Universe → </a>
+
+            <a href="#database-videos" class="secondary-btn">
+              Watch Space Videos ▶
+            </a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <strong>8</strong>
+              <span>PLANETS</span>
+            </div>
+
+            <div class="hero-stat">
+              <strong>100B+</strong>
+              <span>GALAXIES ESTIMATED</span>
+            </div>
+
+            <div class="hero-stat">
+              <strong>∞</strong>
+              <span>WONDERS TO EXPLORE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">SCROLL TO EXPLORE ↓</div>
+    </section>
+
+    <style>
+      /* PLANETS SECTION */
+      .planets-section {
+        background: var(--bg);
+      }
+
+      .planet-search {
+        display: block;
+        width: min(450px, 100%);
+        margin: 0 auto 35px;
+        padding: 15px 20px;
+        border-radius: 30px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        outline: none;
+      }
+
+      .planet-search:focus {
+        border-color: var(--accent);
+      }
+
+      .planet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 24px;
+      }
+
+      .planet-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+        transition: 0.35s;
+      }
+
+      .planet-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent);
+        box-shadow: 0 15px 35px rgba(34, 211, 238, 0.12);
+      }
+
+      .planet-image {
+        height: 210px;
+        width: 100%;
+        object-fit: cover;
+        background: #111b30;
+      }
+
+      .planet-info {
+        padding: 22px;
+      }
+
+      .planet-info h3 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 19px;
+        margin-bottom: 10px;
+      }
+
+      .planet-info p {
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+
+      .planet-detail-btn {
+        border: 1px solid var(--accent);
+        background: transparent;
+        color: var(--accent);
+        padding: 9px 17px;
+        border-radius: 20px;
+        transition: 0.3s;
+      }
+
+      .planet-detail-btn:hover {
+        background: var(--accent);
+        color: #080d1a;
+      }
+
+      .planet-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 20px;
+        place-items: center;
+      }
+
+      .planet-modal.active {
+        display: grid;
+      }
+
+      .planet-modal-content {
+        width: min(500px, 100%);
+        max-height: 85vh;
+        overflow-y: auto;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 30px;
+        position: relative;
+      }
+
+      .planet-modal-content h3 {
+        font-family: "Orbitron", sans-serif;
+        color: var(--accent);
+        margin-bottom: 15px;
+      }
+
+      .planet-modal-content p {
+        line-height: 1.8;
+        color: var(--muted);
+      }
+
+      .planet-close {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        font-size: 25px;
+      }
+
+      @media (max-width: 500px) {
+        .planet-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <!-- PLANETS -->
+    <section class="section planets-section" id="planets">
+      <div class="container">
+        <h2 class="section-title">
+          Explore <span class="accent">The Planets</span>
+        </h2>
+
+        <p class="section-description">
+          Meet the eight fascinating worlds of our solar system. Each planet has
+          its own mysteries and extraordinary features.
+        </p>
+
+        <input
+          type="search"
+          class="planet-search"
+          id="planetSearch"
+          placeholder="🔍 Search a planet..."
+          aria-label="Search planets"
+        />
+
+        <div class="planet-grid" id="planetGrid">
+          <article class="planet-card" data-planet="mercury">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=800"
+              alt="Mercury planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Mercury</h3>
+              <p>The smallest planet and the closest world to the Sun.</p>
+              <button class="planet-detail-btn" data-name="Mercury">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="venus">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614732484003-ef9881555dc3?w=800"
+              alt="Venus planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Venus</h3>
+              <p>
+                A scorching world with a thick atmosphere and bright clouds.
+              </p>
+              <button class="planet-detail-btn" data-name="Venus">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="earth">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800"
+              alt="Earth planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Earth</h3>
+              <p>Our beautiful home planet, filled with life and oceans.</p>
+              <button class="planet-detail-btn" data-name="Earth">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="mars">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800"
+              alt="Mars planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Mars</h3>
+              <p>
+                The red planet, home to giant volcanoes and ancient valleys.
+              </p>
+              <button class="planet-detail-btn" data-name="Mars">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="jupiter">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1630839437035-dac17da580d0?w=800"
+              alt="Jupiter planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Jupiter</h3>
+              <p>The largest planet, famous for its enormous Great Red Spot.</p>
+              <button class="planet-detail-btn" data-name="Jupiter">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="saturn">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614732484003-ef9881555dc3?w=800"
+              alt="Saturn planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Saturn</h3>
+              <p>
+                A gas giant surrounded by spectacular rings of ice and rock.
+              </p>
+              <button class="planet-detail-btn" data-name="Saturn">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="uranus">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=800"
+              alt="Uranus planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Uranus</h3>
+              <p>An icy giant that rotates on its side in a unique way.</p>
+              <button class="planet-detail-btn" data-name="Uranus">
+                Explore More →
+              </button>
+            </div>
+          </article>
+
+          <article class="planet-card" data-planet="neptune">
+            <img
+              class="planet-image"
+              src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=800"
+              alt="Neptune planet"
+              loading="lazy"
+            />
+            <div class="planet-info">
+              <h3>Neptune</h3>
+              <p>A distant blue world with powerful winds and storms.</p>
+              <button class="planet-detail-btn" data-name="Neptune">
+                Explore More →
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANET DETAILS MODAL -->
+    <div class="planet-modal" id="planetModal">
+      <div class="planet-modal-content">
+        <button class="planet-close" id="planetClose" aria-label="Close">
+          ×
+        </button>
+        <h3 id="planetModalTitle">Planet</h3>
+        <p id="planetModalText"></p>
+      </div>
+    </div>
+
+    <script>
+      // Planet search
+      const planetSearch = document.getElementById("planetSearch");
+      const planetCards = document.querySelectorAll(".planet-card");
+
+      planetSearch.addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
+
+        planetCards.forEach((card) => {
+          const name = card.dataset.planet;
+          card.style.display = name.includes(query) ? "" : "none";
+        });
+      });
+
+      // Planet details
+      const planetDescriptions = {
+        Mercury:
+          "Mercury is the smallest planet in our solar system. It has a heavily cratered surface and completes an orbit around the Sun in just 88 Earth days.",
+        Venus:
+          "Venus is the hottest planet in our solar system. Its thick atmosphere traps heat and creates an extreme greenhouse effect.",
+        Earth:
+          "Earth is the only known planet to support life. Its liquid water, protective atmosphere and magnetic field make it special.",
+        Mars: "Mars is known as the Red Planet because of iron-rich dust on its surface. Scientists are studying it for signs of ancient life.",
+        Jupiter:
+          "Jupiter is the largest planet in our solar system. Its Great Red Spot is a giant storm that has lasted for centuries.",
+        Saturn:
+          "Saturn is famous for its magnificent rings, which are made mostly of ice and rocky particles.",
+        Uranus:
+          "Uranus is an ice giant that rotates almost sideways. Its blue-green color comes from methane in its atmosphere.",
+        Neptune:
+          "Neptune is the farthest major planet from the Sun. It is known for its deep blue color and extremely fast winds.",
+      };
+
+      const planetModal = document.getElementById("planetModal");
+
+      document.querySelectorAll(".planet-detail-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const name = button.dataset.name;
+          document.getElementById("planetModalTitle").textContent = name;
+          document.getElementById("planetModalText").textContent =
+            planetDescriptions[name];
+          planetModal.classList.add("active");
+        });
+      });
+
+      document.getElementById("planetClose").addEventListener("click", () => {
+        planetModal.classList.remove("active");
+      });
+
+      planetModal.addEventListener("click", (event) => {
+        if (event.target === planetModal) {
+          planetModal.classList.remove("active");
+        }
+      });
+    </script>
+
+    <style>
+      /* DISCOVERIES */
+      .discoveries-section {
+        background: linear-gradient(180deg, var(--bg), #101a30);
+      }
+
+      .discovery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+      }
+
+      .discovery-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 27px;
+        transition: 0.3s;
+      }
+
+      .discovery-card:hover {
+        transform: translateY(-7px);
+        border-color: var(--accent);
+      }
+
+      .discovery-icon {
+        font-size: 35px;
+        margin-bottom: 18px;
+      }
+
+      .discovery-card h3 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 17px;
+        margin-bottom: 12px;
+      }
+
+      .discovery-card p {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.8;
+      }
+
+      .discovery-tag {
+        display: inline-block;
+        color: var(--accent);
+        background: rgba(34, 211, 238, 0.1);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        margin-bottom: 15px;
+      }
+
+      /* GALLERY */
+      .gallery-section {
+        background: var(--bg);
+      }
+
+      .gallery-filters {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 35px;
+      }
+
+      .gallery-filter {
+        padding: 9px 19px;
+        border-radius: 25px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        transition: 0.3s;
+      }
+
+      .gallery-filter.active,
+      .gallery-filter:hover {
+        background: var(--accent);
+        color: #080d1a;
+        border-color: var(--accent);
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+      }
+
+      .gallery-item {
+        position: relative;
+        height: 250px;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        background: var(--surface);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+
+      .gallery-item:hover img {
+        transform: scale(1.1);
+      }
+
+      .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 35px 17px 17px;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+        color: white;
+        font-weight: 600;
+      }
+
+      /* LIGHTBOX */
+      .gallery-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 4000;
+        background: rgba(0, 0, 0, 0.94);
+        padding: 25px;
+        place-items: center;
+      }
+
+      .gallery-lightbox.active {
+        display: grid;
+      }
+
+      .lightbox-content {
+        width: min(1000px, 100%);
+        text-align: center;
+      }
+
+      .lightbox-content img {
+        max-height: 75vh;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+      }
+
+      .lightbox-content p {
+        color: white;
+        margin-top: 15px;
+      }
+
+      .lightbox-close {
+        position: fixed;
+        top: 20px;
+        right: 30px;
+        font-size: 35px;
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      @media (max-width: 550px) {
+        .gallery-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .gallery-item {
+          height: 230px;
+        }
+      }
+    </style>
+
+    <!-- DISCOVERIES SECTION -->
+    <section class="section discoveries-section" id="discoveries">
+      <div class="container">
+        <h2 class="section-title">
+          Cosmic <span class="accent">Discoveries</span>
+        </h2>
+
+        <p class="section-description">
+          Explore some fascinating discoveries and mysteries that continue to
+          expand our understanding of the universe.
+        </p>
+
+        <div class="discovery-grid">
+          <article class="discovery-card">
+            <div class="discovery-icon">🔭</div>
+            <span class="discovery-tag">DEEP SPACE</span>
+            <h3>James Webb Telescope</h3>
+            <p>
+              The James Webb Space Telescope observes distant galaxies, stars
+              and planets, helping scientists study the early universe.
+            </p>
+          </article>
+
+          <article class="discovery-card">
+            <div class="discovery-icon">🌌</div>
+            <span class="discovery-tag">GALAXIES</span>
+            <h3>Beyond The Milky Way</h3>
+            <p>
+              Billions of galaxies exist across the observable universe, each
+              containing enormous collections of stars.
+            </p>
+          </article>
+
+          <article class="discovery-card">
+            <div class="discovery-icon">🪐</div>
+            <span class="discovery-tag">EXOPLANETS</span>
+            <h3>Worlds Beyond Our Sun</h3>
+            <p>
+              Thousands of planets have been discovered orbiting stars beyond
+              our solar system.
+            </p>
+          </article>
+
+          <article class="discovery-card">
+            <div class="discovery-icon">🕳️</div>
+            <span class="discovery-tag">BLACK HOLES</span>
+            <h3>Black Hole Mysteries</h3>
+            <p>
+              Black holes have gravity so powerful that not even light can
+              escape from within their event horizons.
+            </p>
+          </article>
+
+          <article class="discovery-card">
+            <div class="discovery-icon">🚀</div>
+            <span class="discovery-tag">SPACE MISSIONS</span>
+            <h3>Exploring Mars</h3>
+            <p>
+              Robotic rovers investigate the Martian surface and search for
+              clues about the planet's ancient environment.
+            </p>
+          </article>
+
+          <article class="discovery-card">
+            <div class="discovery-icon">✨</div>
+            <span class="discovery-tag">COSMOLOGY</span>
+            <h3>Dark Matter</h3>
+            <p>
+              Dark matter cannot be seen directly, but scientists study its
+              gravitational effects on galaxies and cosmic structures.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACE GALLERY -->
+    <section class="section gallery-section" id="gallery">
+      <div class="container">
+        <h2 class="section-title">Space <span class="accent">Gallery</span></h2>
+
+        <p class="section-description">
+          A collection of beautiful cosmic scenes. Click any image to view it in
+          full size.
+        </p>
+
+        <div class="gallery-filters">
+          <button class="gallery-filter active" data-filter="all">All</button>
+          <button class="gallery-filter" data-filter="galaxy">Galaxies</button>
+          <button class="gallery-filter" data-filter="planet">Planets</button>
+          <button class="gallery-filter" data-filter="nebula">Nebulae</button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <div class="gallery-item" data-category="galaxy">
+            <img
+              src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1000"
+              alt="Colorful galaxy"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Colorful Galaxy</div>
+          </div>
+
+          <div class="gallery-item" data-category="planet">
+            <img
+              src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=1000"
+              alt="Earth from space"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Planet Earth</div>
+          </div>
+
+          <div class="gallery-item" data-category="nebula">
+            <img
+              src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1000"
+              alt="Space horizon"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Cosmic Horizon</div>
+          </div>
+
+          <div class="gallery-item" data-category="planet">
+            <img
+              src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=1000"
+              alt="Planet in space"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Distant Planet</div>
+          </div>
+
+          <div class="gallery-item" data-category="galaxy">
+            <img
+              src="https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1000"
+              alt="Star field"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Infinite Stars</div>
+          </div>
+
+          <div class="gallery-item" data-category="nebula">
+            <img
+              src="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1000"
+              alt="Nebula and stars"
+              loading="lazy"
+            />
+            <div class="gallery-caption">Nebula Dreams</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGE LIGHTBOX -->
+    <div class="gallery-lightbox" id="galleryLightbox">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+        ×
+      </button>
+      <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="Full size space gallery image" />
+        <p id="lightboxCaption"></p>
+      </div>
+    </div>
+
+    <script>
+      // Gallery category filters
+      const galleryFilters = document.querySelectorAll(".gallery-filter");
+      const galleryItems = document.querySelectorAll(".gallery-item");
+
+      galleryFilters.forEach((button) => {
+        button.addEventListener("click", () => {
+          galleryFilters.forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+
+          const filter = button.dataset.filter;
+
+          galleryItems.forEach((item) => {
+            item.style.display =
+              filter === "all" || item.dataset.category === filter
+                ? ""
+                : "none";
+          });
+        });
+      });
+
+      // Gallery lightbox
+      const galleryLightbox = document.getElementById("galleryLightbox");
+      const lightboxImage = document.getElementById("lightboxImage");
+      const lightboxCaption = document.getElementById("lightboxCaption");
+
+      galleryItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          const image = item.querySelector("img");
+
+          lightboxImage.src = image.src;
+          lightboxCaption.textContent =
+            item.querySelector(".gallery-caption").textContent;
+
+          galleryLightbox.classList.add("active");
+        });
+      });
+
+      function closeGalleryLightbox() {
+        galleryLightbox.classList.remove("active");
+        lightboxImage.src = "";
+      }
+
+      document
+        .getElementById("lightboxClose")
+        .addEventListener("click", closeGalleryLightbox);
+
+      galleryLightbox.addEventListener("click", (event) => {
+        if (event.target === galleryLightbox) {
+          closeGalleryLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeGalleryLightbox();
+        }
+      });
+    </script>
+
+    <style>
+      /* SPACE FACTS */
+      .facts-section {
+        background: linear-gradient(180deg, #101a30, var(--bg));
+      }
+
+      .facts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 22px;
+      }
+
+      .fact-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 25px;
+        transition: 0.3s;
+      }
+
+      .fact-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--accent);
+      }
+
+      .fact-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+      }
+
+      .fact-card p {
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .favorite-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 20px;
+        padding: 8px 14px;
+      }
+
+      .favorite-btn.saved {
+        color: #f43f5e;
+        border-color: #f43f5e;
+      }
+
+      .favorites-panel {
+        margin-top: 35px;
+        padding: 25px;
+        border-radius: 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      .favorites-panel h3 {
+        font-family: "Orbitron", sans-serif;
+        margin-bottom: 15px;
+        color: var(--accent);
+      }
+
+      .favorite-entry {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* QUIZ */
+      .quiz-section {
+        background: var(--bg);
+      }
+
+      .quiz-box {
+        max-width: 750px;
+        margin: auto;
+        padding: 35px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+      }
+
+      .quiz-progress {
+        height: 7px;
+        background: rgba(128, 128, 128, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 25px;
+      }
+
+      .quiz-progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+        transition: width 0.3s;
+      }
+
+      .quiz-count {
+        color: var(--accent);
+        font-size: 13px;
+        margin-bottom: 15px;
+      }
+
+      .quiz-question {
+        font-size: 21px;
+        line-height: 1.5;
+        margin-bottom: 25px;
+      }
+
+      .quiz-options {
+        display: grid;
+        gap: 12px;
+      }
+
+      .quiz-option {
+        text-align: left;
+        padding: 15px 18px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        transition: 0.2s;
+      }
+
+      .quiz-option:hover:not(:disabled) {
+        border-color: var(--accent);
+        background: rgba(34, 211, 238, 0.08);
+      }
+
+      .quiz-option.correct {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: #22c55e;
+      }
+
+      .quiz-option.wrong {
+        background: rgba(244, 63, 94, 0.15);
+        border-color: #f43f5e;
+      }
+
+      .quiz-feedback {
+        margin-top: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+        min-height: 25px;
+      }
+
+      .quiz-next {
+        margin-top: 22px;
+        display: none;
+      }
+
+      .quiz-result {
+        text-align: center;
+        display: none;
+      }
+
+      .quiz-result h3 {
+        font-family: "Orbitron", sans-serif;
+        color: var(--accent);
+        font-size: 26px;
+        margin-bottom: 15px;
+      }
+
+      .quiz-result p {
+        color: var(--muted);
+        margin-bottom: 22px;
+      }
+
+      @media (max-width: 550px) {
+        .quiz-box {
+          padding: 22px;
+        }
+
+        .quiz-question {
+          font-size: 18px;
+        }
+      }
+    </style>
+
+    <!-- SPACE FACTS -->
+    <section class="section facts-section" id="facts">
+      <div class="container">
+        <h2 class="section-title">
+          Amazing <span class="accent">Space Facts</span>
+        </h2>
+
+        <p class="section-description">
+          Discover fascinating facts about the universe. Save your favorite
+          discoveries for later.
+        </p>
+
+        <div class="facts-grid" id="factsGrid">
+          <article class="fact-card">
+            <div class="fact-icon">☀️</div>
+            <p>
+              The Sun contains about 99.86% of the total mass of our solar
+              system.
+            </p>
+            <button
+              class="favorite-btn"
+              data-fact="The Sun contains about 99.86% of the total mass of our solar system."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+
+          <article class="fact-card">
+            <div class="fact-icon">🌌</div>
+            <p>
+              Light from the Sun takes approximately 8 minutes and 20 seconds to
+              reach Earth.
+            </p>
+            <button
+              class="favorite-btn"
+              data-fact="Light from the Sun takes approximately 8 minutes and 20 seconds to reach Earth."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+
+          <article class="fact-card">
+            <div class="fact-icon">🪐</div>
+            <p>One day on Venus is longer than one Venusian year.</p>
+            <button
+              class="favorite-btn"
+              data-fact="One day on Venus is longer than one Venusian year."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+
+          <article class="fact-card">
+            <div class="fact-icon">🌍</div>
+            <p>Earth is the only world currently known to support life.</p>
+            <button
+              class="favorite-btn"
+              data-fact="Earth is the only world currently known to support life."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+
+          <article class="fact-card">
+            <div class="fact-icon">💫</div>
+            <p>
+              Neutron stars are among the densest objects known in the universe.
+            </p>
+            <button
+              class="favorite-btn"
+              data-fact="Neutron stars are among the densest objects known in the universe."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+
+          <article class="fact-card">
+            <div class="fact-icon">🚀</div>
+            <p>
+              The International Space Station orbits Earth approximately every
+              90 minutes.
+            </p>
+            <button
+              class="favorite-btn"
+              data-fact="The International Space Station orbits Earth approximately every 90 minutes."
+            >
+              ♡ Save Fact
+            </button>
+          </article>
+        </div>
+
+        <div class="favorites-panel">
+          <h3>❤️ My Favorite Facts</h3>
+          <div id="favoriteFactsList">
+            <p style="color: var(--muted)">You haven't saved any facts yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACE QUIZ -->
+    <section class="section quiz-section" id="quiz">
+      <div class="container">
+        <h2 class="section-title">
+          Space <span class="accent">Knowledge Quiz</span>
+        </h2>
+
+        <p class="section-description">
+          Test your knowledge of the universe and discover how much you know
+          about space.
+        </p>
+
+        <div class="quiz-box">
+          <div id="quizGame">
+            <div class="quiz-progress">
+              <div class="quiz-progress-fill" id="quizProgressFill"></div>
+            </div>
+
+            <div class="quiz-count" id="quizCount">Question 1 of 5</div>
+
+            <h3 class="quiz-question" id="quizQuestion">Loading question...</h3>
+
+            <div class="quiz-options" id="quizOptions"></div>
+
+            <p class="quiz-feedback" id="quizFeedback"></p>
+
+            <button class="primary-btn quiz-next" id="quizNext">
+              Next Question →
+            </button>
+          </div>
+
+          <div class="quiz-result" id="quizResult">
+            <h3>Quiz Completed! 🚀</h3>
+            <p id="quizScore"></p>
+            <button class="primary-btn" id="quizRestart">Try Again ↻</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // FAVORITE FACTS
+      const favoriteButtons = document.querySelectorAll(".favorite-btn");
+      const favoriteFactsList = document.getElementById("favoriteFactsList");
+
+      let savedFacts = [];
+
+      try {
+        savedFacts = JSON.parse(
+          localStorage.getItem("auroraFavoriteFacts") || "[]",
+        );
+
+        if (!Array.isArray(savedFacts)) savedFacts = [];
+      } catch (error) {
+        savedFacts = [];
+      }
+
+      function renderFavoriteFacts() {
+        favoriteFactsList.innerHTML = "";
+
+        if (savedFacts.length === 0) {
+          favoriteFactsList.textContent = "You haven't saved any facts yet.";
+          return;
+        }
+
+        savedFacts.forEach((fact) => {
+          const entry = document.createElement("div");
+          entry.className = "favorite-entry";
+          entry.textContent = "★ " + fact;
+          favoriteFactsList.appendChild(entry);
+        });
+      }
+
+      function syncFavoriteButtons() {
+        favoriteButtons.forEach((button) => {
+          const saved = savedFacts.includes(button.dataset.fact);
+          button.classList.toggle("saved", saved);
+          button.textContent = saved ? "♥ Saved" : "♡ Save Fact";
+        });
+      }
+
+      favoriteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const fact = button.dataset.fact;
+
+          if (savedFacts.includes(fact)) {
+            savedFacts = savedFacts.filter((item) => item !== fact);
+          } else {
+            savedFacts.push(fact);
+          }
+
+          localStorage.setItem(
+            "auroraFavoriteFacts",
+            JSON.stringify(savedFacts),
+          );
+
+          renderFavoriteFacts();
+          syncFavoriteButtons();
+        });
+      });
+
+      renderFavoriteFacts();
+      syncFavoriteButtons();
+
+      // SPACE QUIZ
+      const quizQuestions = [
+        {
+          question: "Which planet is the largest in our solar system?",
+          options: ["Earth", "Mars", "Jupiter", "Venus"],
+          answer: 2,
+        },
+        {
+          question: "Which planet is known as the Red Planet?",
+          options: ["Mercury", "Mars", "Saturn", "Neptune"],
+          answer: 1,
+        },
+        {
+          question: "What is the name of our galaxy?",
+          options: ["Andromeda", "Whirlpool", "Milky Way", "Sombrero"],
+          answer: 2,
+        },
+        {
+          question: "Which star is closest to Earth?",
+          options: ["Sirius", "The Sun", "Polaris", "Vega"],
+          answer: 1,
+        },
+        {
+          question: "Which planet is famous for its rings?",
+          options: ["Saturn", "Earth", "Mars", "Mercury"],
+          answer: 0,
+        },
+      ];
+
+      let quizIndex = 0;
+      let quizScoreValue = 0;
+      let quizAnswered = false;
+
+      const quizQuestion = document.getElementById("quizQuestion");
+      const quizOptions = document.getElementById("quizOptions");
+      const quizCount = document.getElementById("quizCount");
+      const quizFeedback = document.getElementById("quizFeedback");
+      const quizNext = document.getElementById("quizNext");
+      const quizProgressFill = document.getElementById("quizProgressFill");
+      const quizGame = document.getElementById("quizGame");
+      const quizResult = document.getElementById("quizResult");
+
+      function showQuizQuestion() {
+        quizAnswered = false;
+
+        const current = quizQuestions[quizIndex];
+
+        quizQuestion.textContent = current.question;
+        quizCount.textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
+
+        quizProgressFill.style.width = `${(quizIndex / quizQuestions.length) * 100}%`;
+
+        quizFeedback.textContent = "";
+        quizNext.style.display = "none";
+        quizOptions.innerHTML = "";
+
+        current.options.forEach((option, index) => {
+          const button = document.createElement("button");
+
+          button.className = "quiz-option";
+          button.textContent = option;
+
+          button.addEventListener("click", () => {
+            if (quizAnswered) return;
+
+            quizAnswered = true;
+
+            const correct = index === current.answer;
+
+            if (correct) {
+              quizScoreValue++;
+              quizFeedback.textContent = "✓ Correct answer! Well done.";
+            } else {
+              quizFeedback.textContent = `✗ Incorrect. Correct answer: ${current.options[current.answer]}`;
+            }
+
+            Array.from(quizOptions.children).forEach((optionButton, i) => {
+              optionButton.disabled = true;
+
+              if (i === current.answer) {
+                optionButton.classList.add("correct");
+              } else if (i === index) {
+                optionButton.classList.add("wrong");
+              }
+            });
+
+            quizNext.style.display = "inline-block";
+            quizNext.textContent =
+              quizIndex === quizQuestions.length - 1
+                ? "See My Result →"
+                : "Next Question →";
+          });
+
+          quizOptions.appendChild(button);
+        });
+      }
+
+      function finishQuiz() {
+        quizGame.style.display = "none";
+        quizResult.style.display = "block";
+
+        quizProgressFill.style.width = "100%";
+
+        document.getElementById("quizScore").textContent =
+          `You scored ${quizScoreValue} out of ${quizQuestions.length}. ${
+            quizScoreValue === quizQuestions.length
+              ? "Perfect score! You are a space expert! 🌟"
+              : "Great effort! Keep exploring the universe. 🚀"
+          }`;
+      }
+
+      quizNext.addEventListener("click", () => {
+        if (!quizAnswered) return;
+
+        quizIndex++;
+
+        if (quizIndex < quizQuestions.length) {
+          showQuizQuestion();
+        } else {
+          finishQuiz();
+        }
+      });
+
+      document.getElementById("quizRestart").addEventListener("click", () => {
+        quizIndex = 0;
+        quizScoreValue = 0;
+        quizAnswered = false;
+
+        quizResult.style.display = "none";
+        quizGame.style.display = "block";
+
+        showQuizQuestion();
+      });
+
+      showQuizQuestion();
+    </script>
+
+    <style>
+      /* AUTH MODAL */
+      .auth-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 5000;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 20px;
+        place-items: center;
+      }
+
+      .auth-modal.active {
+        display: grid;
+      }
+
+      .auth-box {
+        position: relative;
+        width: min(440px, 100%);
+        padding: 35px;
+        border-radius: 22px;
+        background: #111b30;
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        color: white;
+        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+      }
+
+      .auth-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 28px;
+      }
+
+      .auth-heading {
+        font-family: "Orbitron", sans-serif;
+        text-align: center;
+        color: #22d3ee;
+        font-size: 25px;
+        margin-bottom: 10px;
+      }
+
+      .auth-subtitle {
+        text-align: center;
+        color: #aab8cc;
+        font-size: 13px;
+        margin-bottom: 25px;
+      }
+
+      .auth-tabs {
+        display: flex;
+        background: #080d1a;
+        padding: 5px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+      }
+
+      .auth-tab {
+        flex: 1;
+        padding: 11px;
+        border: none;
+        border-radius: 9px;
+        background: transparent;
+        color: #aab8cc;
+      }
+
+      .auth-tab.active {
+        background: #22d3ee;
+        color: #080d1a;
+        font-weight: 700;
+      }
+
+      .auth-form {
+        display: grid;
+        gap: 15px;
+      }
+
+      .auth-field label {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 8px;
+        color: #cbd5e1;
+      }
+
+      .auth-field input {
+        width: 100%;
+        padding: 13px 15px;
+        border-radius: 10px;
+        border: 1px solid #34445e;
+        outline: none;
+        background: #080d1a;
+        color: white;
+      }
+
+      .auth-field input:focus {
+        border-color: #22d3ee;
+      }
+
+      .password-wrap {
+        position: relative;
+      }
+
+      .password-wrap input {
+        padding-right: 65px;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #22d3ee;
+        font-size: 12px;
+      }
+
+      .auth-submit {
+        width: 100%;
+        padding: 14px;
+        margin-top: 5px;
+        border: none;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+        color: white;
+        font-weight: 700;
+      }
+
+      .auth-feedback {
+        font-size: 13px;
+        line-height: 1.5;
+        min-height: 20px;
+        text-align: center;
+      }
+
+      .auth-feedback.error {
+        color: #fb7185;
+      }
+
+      .auth-feedback.success {
+        color: #4ade80;
+      }
+
+      .auth-note {
+        color: #8493aa;
+        text-align: center;
+        font-size: 11px;
+        margin-top: 18px;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 450px) {
+        .auth-box {
+          padding: 28px 20px;
+        }
+      }
+    </style>
+
+    <!-- AUTH MODAL -->
+    <div class="auth-modal" id="authModal">
+      <div class="auth-box">
+        <button class="auth-close" id="authClose" aria-label="Close">×</button>
+
+        <h2 class="auth-heading">AURORA</h2>
+
+        <p class="auth-subtitle">Your journey into the universe begins here.</p>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="loginTab">Sign In</button>
+          <button class="auth-tab" id="signupTab">Create Account</button>
+        </div>
+
+        <form class="auth-form" id="authForm">
+          <div class="auth-field hidden" id="nameField">
+            <label for="authName">Full Name</label>
+            <input
+              type="text"
+              id="authName"
+              placeholder="Enter your name"
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="auth-field">
+            <label for="authEmail">Email Address</label>
+            <input
+              type="email"
+              id="authEmail"
+              placeholder="explorer@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="auth-field">
+            <label for="authPassword">Password</label>
+
+            <div class="password-wrap">
+              <input
+                type="password"
+                id="authPassword"
+                placeholder="At least 6 characters"
+                autocomplete="current-password"
+                required
+              />
+
+              <button type="button" class="password-toggle" id="passwordToggle">
+                Show
+              </button>
+            </div>
+          </div>
+
+
+<button
+  type="button"
+  id="forgotPassword"
+  style="
+    display:block;
+    margin:0 auto 15px;
+    background:none;
+    border:none;
+    color:#22d3ee;
+    cursor:pointer;
+    font-size:13px;
+  "
+>
+  Forgot Password?
+</button>
+
+
+          <button type="submit" class="auth-submit" id="authSubmit">
+            Sign In →
+          </button>
+
+          <p class="auth-feedback" id="authFeedback"></p>
+        </form>
+
+        <p class="auth-note">AURORA Space Explorer Account</p>
+      </div>
+    </div>
+
+
+<!-- MY ACCOUNT PROFILE MODAL -->
+<div id="profileModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,0.85);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    background:#111b30;
+    border:1px solid #22d3ee;
+    border-radius:20px;
+    padding:35px;
+    width:100%;
+    max-width:400px;
+    text-align:center;
+    color:white;
+  ">
+    <button id="closeProfile" style="
+      float:right;
+      background:none;
+      border:none;
+      color:white;
+      font-size:25px;
+      cursor:pointer;
+    ">×</button>
+
+    <h2 style="color:#22d3ee;">MY ACCOUNT</h2>
+
+    <div style="font-size:55px;">👨‍🚀</div>
+
+    <h3 id="profileName">Explorer</h3>
+
+    <p id="profileEmail" style="color:#aab8cc;"></p>
+
+    <p style="color:#22d3ee;">● Account Active</p>
+
+    <button id="profileDone" style="
+      background:#22d3ee;
+      color:#080d1a;
+      border:none;
+      padding:12px 30px;
+      border-radius:25px;
+      cursor:pointer;
+      font-weight:bold;
+    ">Close</button>
+  </div>
+</div>
+
+<!-- RESET PASSWORD MODAL -->
+<div id="resetPasswordModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:rgba(0,0,0,.9);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    background:#111b30;
+    padding:30px;
+    border-radius:20px;
+    border:1px solid #22d3ee;
+    width:100%;
+    max-width:400px;
+    color:white;
+    text-align:center;
+  ">
+    <h2 style="color:#22d3ee;">NEW PASSWORD</h2>
+
+    <p>Create your new AURORA password.</p>
+
+    <input
+      type="password"
+      id="newPassword"
+      placeholder="Enter new password"
+      minlength="6"
+      style="width:100%;padding:13px;margin:15px 0;border-radius:8px;"
+    >
+
+    <button id="saveNewPassword" style="
+      background:#22d3ee;
+      border:none;
+      padding:12px 25px;
+      border-radius:25px;
+      cursor:pointer;
+    ">Update Password</button>
+
+    <p id="resetFeedback"></p>
+  </div>
+</div>
+
+
+
+    <script>
+      const supabaseClient = window.supabase.createClient(
+        "https://gsnegthslsqflfrzxjoq.supabase.co",
+        "sb_publishable_8BFFewO-yii4oxsiii1YTQ_owpdTawP",
+      );
+
+      // LOGIN AND SIGNUP INTERFACE
+      const authModal = document.getElementById("authModal");
+      const authForm = document.getElementById("authForm");
+      const loginTab = document.getElementById("loginTab");
+      const signupTab = document.getElementById("signupTab");
+      const nameField = document.getElementById("nameField");
+      const authSubmit = document.getElementById("authSubmit");
+      const authFeedback = document.getElementById("authFeedback");
+      const authPassword = document.getElementById("authPassword");
+      const authName = document.getElementById("authName");
+
+      let authMode = "login";
+
+      // Open login popup
+      document.getElementById("openLogin").addEventListener("click", () => {
+        authModal.classList.add("active");
+        setAuthMode("login");
+      });
+
+      // Close popup
+      document.getElementById("authClose").addEventListener("click", () => {
+        authModal.classList.remove("active");
+      });
+
+      authModal.addEventListener("click", (event) => {
+        if (event.target === authModal) {
+          authModal.classList.remove("active");
+        }
+      });
+
+      // Switch between login and signup
+      function setAuthMode(mode) {
+        authMode = mode;
+
+        loginTab.classList.toggle("active", mode === "login");
+        signupTab.classList.toggle("active", mode === "signup");
+
+        nameField.classList.toggle("hidden", mode === "login");
+
+        authName.required = mode === "signup";
+
+        authSubmit.textContent =
+          mode === "login" ? "Sign In →" : "Create Account →";
+
+        authPassword.autocomplete =
+          mode === "login" ? "current-password" : "new-password";
+
+        authFeedback.textContent = "";
+        authFeedback.className = "auth-feedback";
+      }
+
+      loginTab.addEventListener("click", () => setAuthMode("login"));
+      signupTab.addEventListener("click", () => setAuthMode("signup"));
+
+      // Show or hide password
+      document
+        .getElementById("passwordToggle")
+        .addEventListener("click", function () {
+          const showing = authPassword.type === "text";
+
+          authPassword.type = showing ? "password" : "text";
+          this.textContent = showing ? "Show" : "Hide";
+        });
+
+      // REAL SUPABASE LOGIN AND SIGNUP
+      authForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById("authEmail").value.trim();
+        const password = authPassword.value;
+        const name = authName.value.trim();
+
+        authFeedback.className = "auth-feedback";
+        authFeedback.textContent = "Please wait...";
+        authSubmit.disabled = true;
+
+        try {
+          let result;
+
+          if (authMode === "signup") {
+            result = await supabaseClient.auth.signUp({
+              email: email,
+              password: password,
+              options: {
+                data: {
+                  full_name: name,
+                },
+              },
+            });
+          } else {
+            result = await supabaseClient.auth.signInWithPassword({
+              email: email,
+              password: password,
+            });
+          }
+
+          if (result.error) {
+            throw result.error;
+          }
+
+          authFeedback.textContent =
+            authMode === "signup"
+              ? "Account created successfully! Welcome to AURORA!"
+              : "Login successful! Welcome back!";
+
+          authFeedback.classList.add("success");
+          const { data: sessionData } =
+  await supabaseClient.auth.getSession();
+
+if (sessionData.session) {
+  document.getElementById("openLogin").style.display = "none";
+  document.getElementById("userProfile").style.display = "inline-block";
+  document.getElementById("logoutBtn").style.display = "inline-block";
+
+  document.getElementById("userProfile").textContent =
+    sessionData.session.user.user_metadata.full_name ||
+    sessionData.session.user.email;
+
+  authModal.classList.remove("active");
+}
+        } catch (error) {
+          authFeedback.textContent = error.message;
+          authFeedback.classList.add("error");
+        } finally {
+          authSubmit.disabled = false;
+        }
+      });
+
+
+// MY ACCOUNT PROFILE SYSTEM
+
+// FORGOT PASSWORD SYSTEM
+document.getElementById("forgotPassword").addEventListener("click", async () => {
+  const email = document.getElementById("authEmail").value.trim();
+
+  if (!email) {
+    authFeedback.textContent = "Please enter your email address first.";
+    authFeedback.className = "auth-feedback error";
+    return;
+  }
+
+  authFeedback.textContent = "Sending password reset link...";
+  authFeedback.className = "auth-feedback";
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+
+    if (error) throw error;
+
+    authFeedback.textContent = "Reset link sent! Please check your email.";
+    authFeedback.className = "auth-feedback success";
+  } catch (error) {
+    authFeedback.textContent = error.message;
+    authFeedback.className = "auth-feedback error";
+  }
+});
+
+
+// NEW PASSWORD UPDATE SYSTEM
+
+const resetPasswordModal =
+  document.getElementById("resetPasswordModal");
+
+const resetFeedback =
+  document.getElementById("resetFeedback");
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === "PASSWORD_RECOVERY" && session) {
+    resetPasswordModal.style.display = "flex";
+  }
+});
+
+document.getElementById("saveNewPassword").addEventListener("click", async () => {
+  const newPassword = document.getElementById("newPassword").value;
+
+  if (newPassword.length < 6) {
+    resetFeedback.textContent = "Password must be at least 6 characters.";
+    resetFeedback.style.color = "#ff6b6b";
+    return;
+  }
+
+  resetFeedback.textContent = "Updating password...";
+
+  const { error } = await supabaseClient.auth.updateUser({
+    password: newPassword
+  });
+
+  if (error) {
+    resetFeedback.textContent = error.message;
+    resetFeedback.style.color = "#ff6b6b";
+  } else {
+    resetFeedback.textContent = "Password updated successfully!";
+    resetFeedback.style.color = "#22d3ee";
+
+    document.getElementById("newPassword").value = "";
+
+    setTimeout(() => {
+      resetPasswordModal.style.display = "none";
+    }, 2000);
+  }
+});
+
+
+
+      // LOGOUT SYSTEM
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  document.getElementById("openLogin").style.display = "inline-block";
+  document.getElementById("userProfile").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "none";
+
+  document.getElementById("openLogin").textContent = "Sign In";
+
+  alert("You have logged out successfully!");
+});
+// CHECK EXISTING LOGIN SESSION
+async function checkUserSession() {
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (data.session) {
+    document.getElementById("openLogin").style.display = "none";
+    document.getElementById("userProfile").style.display = "inline-block";
+    document.getElementById("logoutBtn").style.display = "inline-block";
+
+    document.getElementById("userProfile").textContent =
+      data.session.user.user_metadata.full_name ||
+      data.session.user.email;
+  }
+}
+
+checkUserSession();
+
+      // Close popup with Escape key
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          authModal.classList.remove("active");
+        }
+      });
+    </script>
+
+    <style>
+      /* VIDEO SECTION */
+      .video-section {
+        background: #080d1a;
+        color: white;
+      }
+
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+      }
+
+      .video-card {
+        background: #111b30;
+        border: 1px solid #263653;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: 0.3s;
+      }
+
+      .video-card:hover {
+        transform: translateY(-6px);
+        border-color: #22d3ee;
+      }
+
+      .video-thumbnail {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        background: #18243a;
+      }
+
+      .video-content {
+        padding: 20px;
+      }
+
+      .video-content h3 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+
+      .video-content p {
+        color: #aab8cc;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .watch-video {
+        display: inline-block;
+        margin-top: 17px;
+        padding: 10px 17px;
+        border-radius: 20px;
+        background: #22d3ee;
+        color: #080d1a;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .video-status {
+        text-align: center;
+        color: #aab8cc;
+        padding: 25px;
+        grid-column: 1 / -1;
+      }
+
+      /* FOOTER */
+      .site-footer {
+        background: #050914;
+        color: white;
+        padding: 55px 0 25px;
+        border-top: 1px solid #263653;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        flex-wrap: wrap;
+      }
+
+      .footer-logo {
+        font-family: "Orbitron", sans-serif;
+        font-size: 25px;
+        color: #22d3ee;
+        letter-spacing: 3px;
+      }
+
+      .footer-description {
+        color: #aab8cc;
+        font-size: 13px;
+        margin-top: 12px;
+        line-height: 1.7;
+        max-width: 350px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: #aab8cc;
+        font-size: 13px;
+      }
+
+      .footer-links a:hover {
+        color: #22d3ee;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #263653;
+        margin-top: 35px;
+        padding-top: 20px;
+        text-align: center;
+        color: #8493aa;
+        font-size: 12px;
+      }
+
+      @media (max-width: 600px) {
+        .footer-content {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+
+    <!-- SPACE VIDEOS -->
+    <section class="section video-section" id="database-videos">
+      <div class="container">
+        <h2 class="section-title">
+          Explore <span class="accent">Space Videos</span> 🚀
+        </h2>
+
+        <p class="section-description">
+          Watch fascinating videos about planets, galaxies, astronauts and the
+          mysteries of our universe.
+        </p>
+
+        <div class="video-grid" id="video-list">
+          <p class="video-status">Loading space videos...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <a href="#home" class="footer-logo">AURORA.</a>
+            <p class="footer-description">
+              Explore the infinite universe. Discover new worlds, amazing space
+              facts and the wonders beyond Earth.
+            </p>
+          </div>
+
+          <div class="footer-links">
+            <a href="#home">Home</a>
+            <a href="#planets">Planets</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#facts">Space Facts</a>
+            <a href="#database-videos">Videos</a>
+          </div>
+        </div>
+<p style="text-align:center; color:var(--muted); margin-bottom:12px;">
+  Designed & Developed by
+  <strong style="color:var(--accent);">Yawar Ali</strong>
+</p>
+        <div class="footer-bottom">
+          © <span id="footerYear"></span> AURORA Space Explorer. All rights
+          reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button
+      id="backToTop"
+      aria-label="Back to top"
+      style="
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 900;
+        background: #22d3ee;
+        color: #080d1a;
+        border: 0;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        display: none;
+      "
+    >
+      ↑
+    </button>
+
+    <script>
+      // MOBILE NAVIGATION
+      const menuToggle = document.getElementById("menuToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      menuToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+      });
+
+      navLinks.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("active");
+        });
+      });
+
+      // DARK AND LIGHT THEME
+      const themeToggle = document.getElementById("themeToggle");
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-theme");
+
+        const isLight = document.body.classList.contains("light-theme");
+
+        themeToggle.textContent = isLight ? "🌙" : "☀";
+
+        try {
+          localStorage.setItem("auroraTheme", isLight ? "light" : "dark");
+        } catch (error) {
+          console.warn("Theme preference could not be saved.");
+        }
+      });
+
+      // RESTORE SAVED THEME
+      try {
+        const savedTheme = localStorage.getItem("auroraTheme");
+
+        if (savedTheme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggle.textContent = "🌙";
+        }
+      } catch (error) {
+        console.warn("Theme preference could not be loaded.");
+      }
+
+      // LOAD SPACE VIDEOS FROM SUPABASE THROUGH BACKEND
+      async function loadSpaceVideos() {
+        const container = document.getElementById("video-list");
+
+        try {
+          const response = await fetch("/api/videos");
+
+          if (!response.ok) {
+            throw new Error("Could not load videos.");
+          }
+
+          const videos = await response.json();
+
+          container.innerHTML = "";
+
+          if (!Array.isArray(videos) || videos.length === 0) {
+            container.textContent = "No space videos available yet.";
+            return;
+          }
+
+          videos.forEach((video) => {
+            const card = document.createElement("article");
+            card.className = "video-card";
+
+            const image = document.createElement("img");
+            image.className = "video-thumbnail";
+            image.src = video.thumbnail_url || "";
+            image.alt = video.title || "Space video";
+            image.loading = "lazy";
+
+            const content = document.createElement("div");
+            content.className = "video-content";
+
+            const title = document.createElement("h3");
+            title.textContent = video.title || "Untitled Video";
+
+            const description = document.createElement("p");
+            description.textContent =
+              video.description || "Discover the wonders of space.";
+
+            content.append(title, description);
+
+            const link = document.createElement("a");
+            link.className = "watch-video";
+            link.href = video.video_url || "#";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "Watch Video →";
+
+            if (!video.video_url) {
+              link.textContent = "Video link unavailable";
+              link.removeAttribute("target");
+            }
+
+            content.appendChild(link);
+            card.append(image, content);
+            container.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Video loading error:", error);
+
+          container.textContent =
+            "Videos could not load. Please check your server and internet connection.";
+        }
+      }
+
+      // FOOTER YEAR
+      document.getElementById("footerYear").textContent =
+        new Date().getFullYear();
+
+      // BACK TO TOP
+      const backToTop = document.getElementById("backToTop");
+
+      window.addEventListener("scroll", () => {
+        backToTop.style.display = window.scrollY > 400 ? "block" : "none";
+      });
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      // INITIALIZE WEBSITE
+      window.addEventListener("load", () => {
+        loadSpaceVideos();
+
+        const preloader = document.getElementById("preloader");
+
+        setTimeout(() => {
+          preloader.classList.add("hidden");
+        }, 500);
+      });
+    </script>
+  </body>
+</html>
